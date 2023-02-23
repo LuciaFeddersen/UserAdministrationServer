@@ -1,0 +1,398 @@
+openapi: 3.0.0
+info:
+  title: UserAdministration API
+  description: API for user and role administration.
+  version: 1.0.0
+servers:
+- url: https://webtech.f4.htw-berlin.de/userAdministration
+- url: http://localhost:8080/
+security:
+- basicAuth: []
+paths:
+  /user/:
+    get:
+      tags:
+      - user
+      description: Liste aller **user** erhalten.
+      operationId: getUser
+      parameters:
+      - name: limit
+        in: query
+        description: Maximale Länge der Liste festlegen
+        required: false
+        style: form
+        explode: true
+        schema:
+          minimum: 0
+          type: integer
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/user'
+                x-content-type: application/json
+        "401":
+          description: Unauthorized
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+      x-swagger-router-controller: User
+    post:
+      tags:
+      - user
+      description: Einen neuen **user** anlegen.
+      operationId: addUser
+      requestBody:
+        $ref: '#/components/requestBodies/user'
+      responses:
+        "201":
+          description: Created
+          headers:
+            Location:
+              $ref: '#/components/headers/location'
+        "401":
+          description: Unauthorized
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+      x-swagger-router-controller: User
+  /user/{user_id}:
+    get:
+      tags:
+      - user
+      description: '**user** mit **user_id** erhalten.'
+      operationId: getUserById
+      parameters:
+      - name: user_id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          description: id from user
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user'
+        "401":
+          description: Unauthorized
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+        "404":
+          description: user not found
+      x-swagger-router-controller: User
+    put:
+      tags:
+      - user
+      description: '**user** mit **user_id** ändern.'
+      operationId: updateUserById
+      parameters:
+      - name: user_id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          description: id from user
+      requestBody:
+        $ref: '#/components/requestBodies/user'
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user'
+        "401":
+          description: Unauthorized
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+        "404":
+          description: user not found
+      x-swagger-router-controller: User
+    delete:
+      tags:
+      - user
+      description: '**user** mit **user_id** löschen.'
+      operationId: deleteUser
+      parameters:
+      - name: user_id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          description: id from user
+      responses:
+        "200":
+          description: Ok
+        "401":
+          description: Unauthorized
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+        "404":
+          description: user not found
+      x-swagger-router-controller: User
+  /role/:
+    get:
+      tags:
+      - role
+      description: Liste aller **role** erhalten.
+      operationId: getRole
+      parameters:
+      - name: limit
+        in: query
+        description: Maximale Länge der Liste festlegen
+        required: false
+        style: form
+        explode: true
+        schema:
+          minimum: 0
+          type: integer
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/role'
+                x-content-type: application/json
+        "401":
+          description: Unauthorized
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+      x-swagger-router-controller: Role
+    post:
+      tags:
+      - role
+      description: Einen neuen **role** anlegen.
+      operationId: setRole
+      requestBody:
+        $ref: '#/components/requestBodies/role'
+      responses:
+        "201":
+          description: Created
+          headers:
+            Location:
+              $ref: '#/components/headers/location'
+        "401":
+          description: Unauthorized
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+      x-swagger-router-controller: Role
+  /role/{role_id}:
+    get:
+      tags:
+      - role
+      description: '**user** mit **user_id** erhalten.'
+      operationId: getRoleById
+      parameters:
+      - name: role_id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          description: id from role
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/role'
+        "401":
+          description: Unauthorized
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+        "404":
+          description: role not found
+      x-swagger-router-controller: Role
+components:
+  schemas:
+    user:
+      required:
+      - user_id
+      type: object
+      properties:
+        user_id:
+          uniqueItems: true
+          type: integer
+          example: 1274
+        username:
+          maxLength: 20
+          type: string
+          example: firstUser
+        e-mail:
+          type: string
+          example: firstUser@com
+        passwort:
+          type: string
+          example: '****'
+        role:
+          $ref: '#/components/schemas/role'
+      example:
+        passwort: '****'
+        role:
+          role_name: admin
+          role_id: 21
+          description: has all rights
+        user_id: 1274
+        e-mail: firstUser@com
+        username: firstUser
+    role:
+      required:
+      - role_id
+      type: object
+      properties:
+        role_id:
+          uniqueItems: true
+          type: integer
+          example: 21
+        role_name:
+          maxLength: 20
+          type: string
+          example: admin
+        description:
+          type: string
+          example: has all rights
+      example:
+        role_name: admin
+        role_id: 21
+        description: has all rights
+  responses:
+    user:
+      description: Ok
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/user'
+    userArray:
+      description: Ok
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/user'
+            x-content-type: application/json
+    role:
+      description: Ok
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/role'
+    roleArray:
+      description: Ok
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/role'
+            x-content-type: application/json
+    unauthorizedError:
+      description: Unauthorized
+      headers:
+        WWW_Authenticate:
+          style: simple
+          explode: false
+          schema:
+            type: string
+  parameters:
+    user_id:
+      name: user_id
+      in: path
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: integer
+        description: id from user
+    role_id:
+      name: role_id
+      in: path
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: integer
+        description: id from role
+    limit:
+      name: limit
+      in: query
+      description: Maximale Länge der Liste festlegen
+      required: false
+      style: form
+      explode: true
+      schema:
+        minimum: 0
+        type: integer
+  requestBodies:
+    user:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/user'
+      required: true
+    role:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/role'
+      required: true
+  headers:
+    location:
+      description: URI der neu erzeugten Ressource
+      style: simple
+      explode: false
+      schema:
+        type: string
+        format: uri
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
