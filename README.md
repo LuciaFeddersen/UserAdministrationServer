@@ -26,7 +26,7 @@ A list of technologies used within the project:
 ***
 A little intro about the installation.
 ```
-$ git clone https://github.com/LuciaFeddersen/userAdministration.git
+$ git clone https://github.com/LuciaFeddersen/UserAdministrationServer.git
 $ npm install
 $ node index.js
 ```
